@@ -89,11 +89,6 @@
             <Property name="text" type="java.lang.String" value="Window"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="menuShortcuts">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Shortcuts"/>
-              </Properties>
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuSettings">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Settings"/>

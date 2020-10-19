@@ -71,7 +71,6 @@ public class MavenView extends javax.swing.JFrame {
         thresholdSlider = new javax.swing.JSlider();
         menu = new javax.swing.JMenuBar();
         menuWindow = new javax.swing.JMenu();
-        menuShortcuts = new javax.swing.JMenuItem();
         menuSettings = new javax.swing.JMenuItem();
 
         settingsDialog.setTitle("Settings");
@@ -251,9 +250,6 @@ public class MavenView extends javax.swing.JFrame {
 
         menuWindow.setText("Window");
 
-        menuShortcuts.setText("Shortcuts");
-        menuWindow.add(menuShortcuts);
-
         menuSettings.setText("Settings");
         menuSettings.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -361,7 +357,6 @@ public class MavenView extends javax.swing.JFrame {
     private javax.swing.JLabel maxLabel;
     private javax.swing.JMenuBar menu;
     private javax.swing.JMenuItem menuSettings;
-    private javax.swing.JMenuItem menuShortcuts;
     private javax.swing.JMenu menuWindow;
     private javax.swing.JTextField minField;
     private javax.swing.JLabel minLabel;
@@ -388,7 +383,6 @@ public class MavenView extends javax.swing.JFrame {
         
         menuWindow.setText(bundle.getString("window"));
         menuSettings.setText(bundle.getString("settings"));
-        menuShortcuts.setText(bundle.getString("shortcuts"));
         
         // Errors
         errorLabel.setText("");
