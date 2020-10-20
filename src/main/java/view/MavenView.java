@@ -295,6 +295,8 @@ public class MavenView extends javax.swing.JFrame {
         try {
             int min = Integer.parseInt(minField.getText());
             int max = Integer.parseInt(maxField.getText());
+            minField.setText(Integer.toString(min));
+            maxField.setText(Integer.toString(max));
             
             if (min > 99 || max > 99) { // "<html>" + _ + "</html>"
                 errorLabel.setText("<html>" + bundle.getString("numberError") + "</html>");
