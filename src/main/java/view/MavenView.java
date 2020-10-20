@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.CharLimit;
 import model.Matrix;
 
 
@@ -16,8 +17,14 @@ import model.Matrix;
 public class MavenView extends javax.swing.JFrame {
     private final int size;
     private Matrix matrix = null;
+    
+    // Lang
     ResourceBundle bundle = ResourceBundle.getBundle("resources/Bundle");
     private final Map<String, Locale> locale;
+    
+    // Digits
+    CharLimit charLimit = new CharLimit(2);
+    
     
     /**
      * Creates new form MavenView
@@ -296,8 +303,8 @@ public class MavenView extends javax.swing.JFrame {
             int min = Integer.parseInt(minField.getText());
             int max = Integer.parseInt(maxField.getText());
             
-            if (min > 99 || max > 99) { // "<html>" + _ + "</html>"
-                errorLabel.setText("<html>" + bundle.getString("numberError") + "</html>");
+            if ( !charLimit.isLegal(min) || !charLimit.isLegal(max) ) {
+                errorLabel.setText("<html>" + bundle.getString("charLimitError") +" "+ charLimit.getChars() +" "+ bundle.getString("digits").toLowerCase() + "</html>");
                 return;
             }
             if (min >= max) {
