@@ -354,8 +354,7 @@ public class MavenView extends javax.swing.JFrame {
     }//GEN-LAST:event_menuSettingsActionPerformed
 
     private void saveSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSettingsActionPerformed
-        Locale local = locale.get((String) langCombo.getSelectedItem());
-        bundle = ResourceBundle.getBundle("resources/Bundle", local);
+        setBundle((String) langCombo.getSelectedItem());
         setDigits((String) digitsCombo.getSelectedItem());
         
         settingsDialog.setVisible(false);
@@ -423,8 +422,13 @@ public class MavenView extends javax.swing.JFrame {
         cancelSettings.setText(bundle.getString("cancel"));
     }
 
-    private void setDigits(String string) {
-        int digits = Integer.parseInt(string);
+    private void setDigits(String digitsString) {
+        int digits = Integer.parseInt(digitsString);
         charLimit = new CharLimit(digits);
+    }
+
+    private void setBundle(String localeString) {
+        Locale local = locale.get(localeString);
+        bundle = ResourceBundle.getBundle("resources/Bundle", local);
     }
 }
