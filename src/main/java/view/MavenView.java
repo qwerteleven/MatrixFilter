@@ -303,12 +303,12 @@ public class MavenView extends javax.swing.JFrame {
             int min = Integer.parseInt(minField.getText());
             int max = Integer.parseInt(maxField.getText());
             
-            if ( !charLimit.isLegal(min) || !charLimit.isLegal(max) ) {
-                errorLabel.setText("<html>" + bundle.getString("charLimitError") +" "+ charLimit.getChars() +" "+ bundle.getString("digits").toLowerCase() + "</html>");
-                return;
-            }
             if (min >= max) {
                 errorLabel.setText("<html>" + bundle.getString("minMaxError") + "</html>");
+                return;
+            }
+            if ( !charLimit.isLegal(min) || !charLimit.isLegal(max) ) {
+                errorLabel.setText("<html>" + bundle.getString("charLimitError") +" "+ charLimit.getChars() +" "+ bundle.getString("digits").toLowerCase() + "</html>");
                 return;
             }
             errorLabel.setText("");
