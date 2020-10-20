@@ -64,6 +64,8 @@ public class MavenView extends javax.swing.JFrame {
         langCombo = new javax.swing.JComboBox<>();
         saveSettings = new javax.swing.JButton();
         cancelSettings = new javax.swing.JButton();
+        digitsLabel = new javax.swing.JLabel();
+        digitsCombo = new javax.swing.JComboBox<>();
         propertiesPanel = new javax.swing.JPanel();
         minLabel = new javax.swing.JLabel();
         minField = new javax.swing.JTextField();
@@ -101,6 +103,11 @@ public class MavenView extends javax.swing.JFrame {
             }
         });
 
+        digitsLabel.setText("Digits");
+
+        digitsCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2" }));
+        digitsCombo.setSelectedItem(Integer.toString(charLimit.getChars()));
+
         javax.swing.GroupLayout settingsDialogLayout = new javax.swing.GroupLayout(settingsDialog.getContentPane());
         settingsDialog.getContentPane().setLayout(settingsDialogLayout);
         settingsDialogLayout.setHorizontalGroup(
@@ -109,14 +116,18 @@ public class MavenView extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(settingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(settingsDialogLayout.createSequentialGroup()
-                        .addComponent(langLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(langCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(settingsDialogLayout.createSequentialGroup()
                         .addComponent(saveSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(cancelSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(settingsDialogLayout.createSequentialGroup()
+                        .addGroup(settingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(langLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(digitsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(settingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(digitsCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(langCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         settingsDialogLayout.setVerticalGroup(
@@ -126,7 +137,11 @@ public class MavenView extends javax.swing.JFrame {
                 .addGroup(settingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(langLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(langCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(settingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(digitsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(digitsCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addGroup(settingsDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelSettings)
                     .addComponent(saveSettings))
@@ -341,6 +356,8 @@ public class MavenView extends javax.swing.JFrame {
     private void saveSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSettingsActionPerformed
         Locale local = locale.get((String) langCombo.getSelectedItem());
         bundle = ResourceBundle.getBundle("resources/Bundle", local);
+        setDigits((String) digitsCombo.getSelectedItem());
+        
         settingsDialog.setVisible(false);
         initLang();
     }//GEN-LAST:event_saveSettingsActionPerformed
@@ -353,6 +370,8 @@ public class MavenView extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelSettings;
+    private javax.swing.JComboBox<String> digitsCombo;
+    private javax.swing.JLabel digitsLabel;
     private javax.swing.JLabel errorLabel;
     private javax.swing.JButton generateButton;
     private javax.swing.JScrollPane jScrollPane1;
@@ -399,7 +418,13 @@ public class MavenView extends javax.swing.JFrame {
         // --- Settings ---
         settingsDialog.setTitle(bundle.getString("settings"));
         langLabel.setText(bundle.getString("language"));
+        digitsLabel.setText(bundle.getString("digits"));
         saveSettings.setText(bundle.getString("save"));
         cancelSettings.setText(bundle.getString("cancel"));
+    }
+
+    private void setDigits(String string) {
+        int digits = Integer.parseInt(string);
+        charLimit = new CharLimit(digits);
     }
 }
