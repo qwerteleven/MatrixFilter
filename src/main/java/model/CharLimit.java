@@ -9,6 +9,7 @@ package model;
  *
  * @author Mario
  */
+
 public class CharLimit {
     private int chars;
 

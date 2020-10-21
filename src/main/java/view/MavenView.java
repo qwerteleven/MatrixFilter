@@ -3,20 +3,22 @@ package view;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.CharLimit;
 import model.Matrix;
+import model.MatrixRecord;
 
 
 /**
  *
  * @author Mario
  */
+
 public class MavenView extends javax.swing.JFrame {
     private final int size;
     private Matrix matrix = null;
+    private MatrixRecord record = new MatrixRecord(10); //size of UNDO
     
     // Lang
     ResourceBundle bundle = ResourceBundle.getBundle("resources/Bundle");
@@ -28,6 +30,8 @@ public class MavenView extends javax.swing.JFrame {
     
     /**
      * Creates new form MavenView
+     * @param size
+     * @param locale
      */
     public MavenView(int size, Map<String, Locale> locale) {
         this.size = size;
@@ -73,6 +77,8 @@ public class MavenView extends javax.swing.JFrame {
         maxField = new javax.swing.JTextField();
         generateButton = new javax.swing.JButton();
         errorLabel = new javax.swing.JLabel();
+        previousState = new javax.swing.JButton();
+        nextState = new javax.swing.JButton();
         matrixPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
@@ -172,6 +178,20 @@ public class MavenView extends javax.swing.JFrame {
         errorLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         errorLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
+        previousState.setText("<");
+        previousState.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                previousStateActionPerformed(evt);
+            }
+        });
+
+        nextState.setText(">");
+        nextState.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nextStateActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout propertiesPanelLayout = new javax.swing.GroupLayout(propertiesPanel);
         propertiesPanel.setLayout(propertiesPanelLayout);
         propertiesPanelLayout.setHorizontalGroup(
@@ -179,22 +199,22 @@ public class MavenView extends javax.swing.JFrame {
             .addGroup(propertiesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(maxLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(minLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(propertiesPanelLayout.createSequentialGroup()
-                        .addGroup(propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(maxLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(minLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(minField)
-                            .addComponent(maxField)))
-                    .addGroup(propertiesPanelLayout.createSequentialGroup()
-                        .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, 0)
+                        .addComponent(previousState)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(generateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(minField)
+                    .addComponent(maxField)
+                    .addComponent(nextState, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, propertiesPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(errorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
-            .addGroup(propertiesPanelLayout.createSequentialGroup()
-                .addGap(33, 33, 33)
-                .addComponent(generateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(36, 36, 36))
         );
         propertiesPanelLayout.setVerticalGroup(
             propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -208,7 +228,10 @@ public class MavenView extends javax.swing.JFrame {
                     .addComponent(maxField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(maxLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(generateButton)
+                .addGroup(propertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(generateButton)
+                    .addComponent(previousState)
+                    .addComponent(nextState))
                 .addGap(18, 18, 18)
                 .addComponent(errorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
                 .addContainerGap())
@@ -229,14 +252,13 @@ public class MavenView extends javax.swing.JFrame {
             matrixPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(matrixPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE))
         );
         matrixPanelLayout.setVerticalGroup(
             matrixPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(matrixPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, matrixPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -249,6 +271,7 @@ public class MavenView extends javax.swing.JFrame {
         thresholdSlider.setPaintLabels(true);
         thresholdSlider.setPaintTicks(true);
         thresholdSlider.setValue(10);
+        thresholdSlider.setAutoscrolls(true);
         thresholdSlider.setPreferredSize(new java.awt.Dimension(100, 11));
         thresholdSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -260,14 +283,17 @@ public class MavenView extends javax.swing.JFrame {
         thresholdPanel.setLayout(thresholdPanelLayout);
         thresholdPanelLayout.setHorizontalGroup(
             thresholdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, thresholdPanelLayout.createSequentialGroup()
+            .addGroup(thresholdPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(thresholdSlider, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         thresholdPanelLayout.setVerticalGroup(
             thresholdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(thresholdSlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, thresholdPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(thresholdSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         menuWindow.setText("Window");
@@ -290,9 +316,9 @@ public class MavenView extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(thresholdPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(propertiesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(matrixPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -301,10 +327,13 @@ public class MavenView extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(matrixPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(propertiesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(propertiesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(7, 7, 7)
+                        .addComponent(matrixPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(thresholdPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -319,16 +348,18 @@ public class MavenView extends javax.swing.JFrame {
             int max = Integer.parseInt(maxField.getText());
             
             if (min >= max) {
-                errorLabel.setText("<html>" + bundle.getString("minMaxError") + "</html>");
+                
+                errorLabel.setText("<html><font color='red'>" + bundle.getString("minMaxError") + "</html>");
                 return;
             }
             if ( !charLimit.isLegal(min) || !charLimit.isLegal(max) ) {
-                errorLabel.setText("<html>" + bundle.getString("charLimitError") +" "+ charLimit.getChars() +" "+ bundle.getString("digits").toLowerCase() + "</html>");
+                errorLabel.setText("<html><font color='red'>" + bundle.getString("charLimitError") +" "+ charLimit.getChars() +" "+ bundle.getString("digits").toLowerCase() + "</html>");
                 return;
             }
             errorLabel.setText("");
             
             matrix = new Matrix(size, min, max);
+            record.saveState(matrix);
             jTextArea1.setText(matrix.toString());
             
             thresholdSlider.setMaximum(max);
@@ -364,8 +395,23 @@ public class MavenView extends javax.swing.JFrame {
     private void cancelSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelSettingsActionPerformed
         settingsDialog.setVisible(false);
     }//GEN-LAST:event_cancelSettingsActionPerformed
+  
+    private void nextStateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextStateActionPerformed
+        Matrix state = record.getNextState();
+        if (state == null) return;
+        
+        matrix = state;
+        jTextArea1.setText(matrix.toString());
+    }//GEN-LAST:event_nextStateActionPerformed
 
-    
+    private void previousStateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previousStateActionPerformed
+        Matrix state = record.getPreviousState();
+        if (state == null) return;
+        
+        matrix = state;
+        jTextArea1.setText(matrix.toString());
+    }//GEN-LAST:event_previousStateActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelSettings;
@@ -385,6 +431,8 @@ public class MavenView extends javax.swing.JFrame {
     private javax.swing.JMenu menuWindow;
     private javax.swing.JTextField minField;
     private javax.swing.JLabel minLabel;
+    private javax.swing.JButton nextState;
+    private javax.swing.JButton previousState;
     private javax.swing.JPanel propertiesPanel;
     private javax.swing.JButton saveSettings;
     private javax.swing.JDialog settingsDialog;

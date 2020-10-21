@@ -4,6 +4,7 @@ package model;
  *
  * @author Mario
  */
+
 public class Matrix {
     private final int[][] values;
     private final int min;
@@ -11,7 +12,7 @@ public class Matrix {
     private int threshold;
 
     public Matrix(int size, int min, int max) throws Exception {
-        if (min > max) throw new Exception("Matrix max cant be less than min");
+        if (min > max) throw new Exception("Matrix max can`t be less than min");
         
         this.min = min;
         this.max = max;
@@ -40,19 +41,13 @@ public class Matrix {
     public String toString() {
         String string = "";
         
-        for (int i = 0; i < values.length; i++) {
-            for (int j = 0; j < values.length; j++) {
-                if (values[i][j] >= threshold) {
-                    string += values[i][j];
-                    if (j != values.length - 1) string += "\t";
-                } else {
-                    string += "-";
-                    if (j != values.length - 1) string += "\t";
-                }
+        for (int[] row : values) {
+            for (int element : row) {
+                string += (element >= threshold) ? element + "\t" : "-\t";
             }
-            if (i != values.length - 1) string += "\n";
+            string += "\n";
         }
         
-        return string;
+        return string.trim();
     }
 }

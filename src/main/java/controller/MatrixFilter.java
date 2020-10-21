@@ -9,6 +9,7 @@ import view.MavenView;
  *
  * @author Mario
  */
+
 public class MatrixFilter {
     private final int size;
     private final Map<String, Locale> locale = new TreeMap<>();
@@ -20,8 +21,8 @@ public class MatrixFilter {
             new Locale("es", "ES"),
             new Locale("en", "US")
         };
-        for (int i = 0; i < loc.length; i++) {
-            locale.put(loc[i].getDisplayName(), loc[i]);
+        for(Locale locate : loc) {
+            locale.put(locate.getDisplayName(), locate);
         }
     }
     
@@ -50,10 +51,8 @@ public class MatrixFilter {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new MavenView(size, locale).setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new MavenView(size, locale).setVisible(true);
         });
     }
 }
