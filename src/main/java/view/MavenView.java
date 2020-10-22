@@ -36,15 +36,18 @@ public class MavenView extends javax.swing.JFrame {
     public MavenView(int size, Map<String, Locale> locale) {
         this.size = size;
         this.locale = locale;
-        
         initComponents();
         initLang();
         
         try {
+            
             matrix = new Matrix(size, Integer.parseInt(minField.getText()), Integer.parseInt(maxField.getText()));
+            record.saveState(matrix);
+            
         } catch (Exception ex) {
             Logger.getLogger(MavenView.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
         
         jTextArea1.setEditable(false);
         jTextArea1.setTabSize(2);
@@ -70,6 +73,7 @@ public class MavenView extends javax.swing.JFrame {
         cancelSettings = new javax.swing.JButton();
         digitsLabel = new javax.swing.JLabel();
         digitsCombo = new javax.swing.JComboBox<>();
+        jMenu1 = new javax.swing.JMenu();
         propertiesPanel = new javax.swing.JPanel();
         minLabel = new javax.swing.JLabel();
         minField = new javax.swing.JTextField();
@@ -87,6 +91,8 @@ public class MavenView extends javax.swing.JFrame {
         menu = new javax.swing.JMenuBar();
         menuWindow = new javax.swing.JMenu();
         menuSettings = new javax.swing.JMenuItem();
+        undo = new javax.swing.JMenuItem();
+        redo = new javax.swing.JMenuItem();
 
         settingsDialog.setTitle("Settings");
         settingsDialog.setResizable(false);
@@ -154,6 +160,8 @@ public class MavenView extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jMenu1.setText("jMenu1");
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Matrix Filter");
         setResizable(false);
@@ -202,7 +210,6 @@ public class MavenView extends javax.swing.JFrame {
                     .addComponent(maxLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(minLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(propertiesPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, 0)
                         .addComponent(previousState)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(generateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -306,6 +313,24 @@ public class MavenView extends javax.swing.JFrame {
         });
         menuWindow.add(menuSettings);
 
+        undo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        undo.setText("Undo");
+        undo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                undoActionPerformed(evt);
+            }
+        });
+        menuWindow.add(undo);
+
+        redo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        redo.setText("Redo");
+        redo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                redoActionPerformed(evt);
+            }
+        });
+        menuWindow.add(redo);
+
         menu.add(menuWindow);
 
         setJMenuBar(menu);
@@ -364,7 +389,13 @@ public class MavenView extends javax.swing.JFrame {
             
             thresholdSlider.setMaximum(max);
             thresholdSlider.setMinimum(min);
+            
+            int majorTickSpacing = (int) Math.round((max-min) / 5);
+            
+            if (max < 10) majorTickSpacing = 1 ;
+            thresholdSlider.setMajorTickSpacing(majorTickSpacing);
             thresholdSlider.setValue(min);
+            
         } catch (Exception ex) {
             Logger.getLogger(MavenView.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -372,6 +403,7 @@ public class MavenView extends javax.swing.JFrame {
 
     private void thresholdSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_thresholdSliderStateChanged
         matrix.setThreshold(thresholdSlider.getValue());
+
         jTextArea1.setText(matrix.toString());
     }//GEN-LAST:event_thresholdSliderStateChanged
 
@@ -397,20 +429,48 @@ public class MavenView extends javax.swing.JFrame {
     }//GEN-LAST:event_cancelSettingsActionPerformed
   
     private void nextStateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextStateActionPerformed
-        Matrix state = record.getNextState();
-        if (state == null) return;
-        
-        matrix = state;
-        jTextArea1.setText(matrix.toString());
+        try{  
+            Matrix state = record.getNextState();
+            if (state != null) matrix = state;
+
+            jTextArea1.setText(matrix.toString());
+        } catch (Exception ex) {
+            Logger.getLogger(MavenView.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_nextStateActionPerformed
 
     private void previousStateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previousStateActionPerformed
-        Matrix state = record.getPreviousState();
-        if (state == null) return;
-        
-        matrix = state;
-        jTextArea1.setText(matrix.toString());
+        try {
+            Matrix state = record.getPreviousState();
+            if (state != null) matrix = state;
+
+            jTextArea1.setText(matrix.toString());
+        } catch (Exception ex) {
+            Logger.getLogger(MavenView.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_previousStateActionPerformed
+
+    private void undoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_undoActionPerformed
+        try {
+            Matrix state = record.getPreviousState();
+            if (state != null) matrix = state;
+
+            jTextArea1.setText(matrix.toString());
+        } catch (Exception ex) {
+            Logger.getLogger(MavenView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_undoActionPerformed
+
+    private void redoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redoActionPerformed
+        try{  
+            Matrix state = record.getNextState();
+            if (state != null) matrix = state;
+
+            jTextArea1.setText(matrix.toString());
+        } catch (Exception ex) {
+            Logger.getLogger(MavenView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_redoActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -419,6 +479,7 @@ public class MavenView extends javax.swing.JFrame {
     private javax.swing.JLabel digitsLabel;
     private javax.swing.JLabel errorLabel;
     private javax.swing.JButton generateButton;
+    private javax.swing.JMenu jMenu1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JComboBox<String> langCombo;
@@ -434,10 +495,12 @@ public class MavenView extends javax.swing.JFrame {
     private javax.swing.JButton nextState;
     private javax.swing.JButton previousState;
     private javax.swing.JPanel propertiesPanel;
+    private javax.swing.JMenuItem redo;
     private javax.swing.JButton saveSettings;
     private javax.swing.JDialog settingsDialog;
     private javax.swing.JPanel thresholdPanel;
     private javax.swing.JSlider thresholdSlider;
+    private javax.swing.JMenuItem undo;
     // End of variables declaration//GEN-END:variables
 
     private void initLang() {
@@ -456,6 +519,9 @@ public class MavenView extends javax.swing.JFrame {
         
         menuWindow.setText(bundle.getString("window"));
         menuSettings.setText(bundle.getString("settings"));
+        
+        redo.setText(bundle.getString("redo"));
+        undo.setText(bundle.getString("undo"));
         
         // Errors
         errorLabel.setText("");

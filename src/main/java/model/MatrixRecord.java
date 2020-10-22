@@ -38,8 +38,9 @@ public class MatrixRecord {
         
         if (this.lastState == this.actualState) return null;
         
-        Matrix state = states[++this.actualState % step];
+        Matrix state = states[this.actualState % step];
         
+        this.actualState++;
         return state;
     }
     
@@ -47,9 +48,9 @@ public class MatrixRecord {
     public Matrix getPreviousState() {
         
         if (this.lastState == this.actualState - 1 ||
-            this.states[(this.actualState-1) % step] == null) return null;
-        
-        Matrix state = states[--this.actualState % step];
+            this.states[(this.actualState - 2) % step] == null) return null;
+        this.actualState--;
+        Matrix state = states[(this.actualState - 1) % step];
         
         return state;
     }
